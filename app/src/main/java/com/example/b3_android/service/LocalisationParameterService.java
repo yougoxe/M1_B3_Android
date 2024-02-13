@@ -34,20 +34,24 @@ public class LocalisationParameterService extends Service {
         this.currentActivity = activity;
     }
 
+    public boolean IsLocationActivated()
+    {
+        LocationManager locationManager = (LocationManager) currentActivity.getSystemService(Context.LOCATION_SERVICE);
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+    }
+
     public void checkLocationSettings() {
         if (currentActivity == null) {
             return;
         }
         LocationManager locationManager = (LocationManager) currentActivity.getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            // Location is not enabled, show dialog to enable it
             AlertDialog.Builder builder = new AlertDialog.Builder(currentActivity);
             builder.setMessage("La géolocalisation est désactivée. Voulez-vous l'activer?")
                     .setCancelable(false)
                     .setPositiveButton("Oui", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            // Redirect user to location settings
                             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                             currentActivity.startActivity(intent);
@@ -57,7 +61,6 @@ public class LocalisationParameterService extends Service {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
-                            // Fermer l'application
                             closeApp();
                         }
                     });
@@ -78,7 +81,6 @@ public class LocalisationParameterService extends Service {
         }
         if (ContextCompat.checkSelfPermission(currentActivity, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Permission not granted, request it
             ActivityCompat.requestPermissions(currentActivity,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION);
