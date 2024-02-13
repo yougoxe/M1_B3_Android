@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">B3_android</string>
+    <string name="title_activity_maps">MapsActivity</string>
+
+    <string name="title_activity_add">Signalé une météo</string>
+    <string name="edit_text_activity_add">Entrez la température</string>
+    <string-array name="weather_array">
+        <item>☀️Ensoleillé</item>
+        <item>☁️ Nuageux</item>
+        <item>🌧️ Pluie</item>
+        <item>🌫️ Brouillard</item>
+        <item>⛅  Partiellement nuageux</item>
+        <item>🌦️  Averses</item>
+        <item>❄️ Neige</item>
+        <item>🌩️  Tonnerre</item>
+    </string-array>
+    <string name="submit_activity_add">SOUMETTRE</string>
+</resources>
