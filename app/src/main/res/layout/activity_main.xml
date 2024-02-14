@@ -44,19 +44,20 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.098" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/refresh"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@android:drawable/ic_menu_rotate"
-        android:text="refresh"
-        android:textSize="18sp"
+    <SeekBar
+        android:id="@+id/slider"
+        android:layout_width="match_parent"
+        android:layout_height="22dp"
+        android:paddingLeft="10dip"
+        android:paddingRight="10dip"
+        android:max="100"
+        android:progress="50"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.934"
+        app:layout_constraintHorizontal_bias="0.1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.976" />
+        app:layout_constraintVertical_bias="0.950" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

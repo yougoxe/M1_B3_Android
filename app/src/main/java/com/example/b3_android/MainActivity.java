@@ -22,6 +22,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.example.b3_android.service.ColorService;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar toolbar;
     FloatingActionButton showMap;
     FloatingActionButton add;
+    private SeekBar seekBar;
     FloatingActionButton refresh;
 
     LocalisationParameterService locationParameterService = new LocalisationParameterService();
@@ -94,11 +96,27 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-        refresh = findViewById(R.id.refresh);
-        refresh.setBackgroundTintList(ColorStateList.valueOf(color));
-        Drawable refreshDrawable = getResources().getDrawable(R.drawable.baseline_refresh_24);
-        refreshDrawable.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
-        refresh.setImageDrawable(refreshDrawable);
+
+        this.seekBar = findViewById(R.id.slider);
+        seekBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        this.seekBar.setDrawingCacheBackgroundColor(color);
+        this.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                // Not Used
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                // Not Used
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                // Not Used
+            }
+        });
     }
 
     @Override
