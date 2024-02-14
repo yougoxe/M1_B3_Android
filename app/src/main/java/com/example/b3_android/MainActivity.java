@@ -14,11 +14,14 @@ import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import com.example.b3_android.service.ColorService;
@@ -32,9 +35,6 @@ public class MainActivity extends AppCompatActivity {
     FloatingActionButton showMap;
     FloatingActionButton add;
     FloatingActionButton refresh;
-
-    private static final int REQUEST_LOCATION_PERMISSION = 1001;
-    private static final int REQUEST_ENABLE_LOCATION = 1002;
 
     LocalisationParameterService locationParameterService = new LocalisationParameterService();
     ColorService colorService = new ColorService();
@@ -58,7 +58,10 @@ public class MainActivity extends AppCompatActivity {
         this.color = this.colorService.getColors(sharedPreferences);
 
         //configure the toolbar
-        this.configureToolbar();
+        toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
+        Window window = getWindow();
+        this.colorService.setToolbarColor(toolbar, color, window);
+        setSupportActionBar(toolbar);
 
         showMap = findViewById(R.id.showMap);
         showMap.setBackgroundTintList(ColorStateList.valueOf(color));
@@ -121,5 +124,10 @@ public class MainActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
         toolbar.setBackgroundColor(color);
         setSupportActionBar(toolbar);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Window window = getWindow();
+            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            window.setStatusBarColor(color);
+        }
     }
 }

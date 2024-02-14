@@ -12,6 +12,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -27,6 +28,7 @@ public class AddActivity extends AppCompatActivity {
     private Button submitButton;
     int color;
     private ColorService colorService = new ColorService();
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,7 +49,11 @@ public class AddActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         unitSpinner.setAdapter(adapter);
 
+        // configure toolbar
+        this.toolbar = (Toolbar) findViewById(R.id.activity_add_toolbar);
         this.configureToolbar();
+        Window window = getWindow();
+        this.colorService.setToolbarColor(this.toolbar, color,window);
 
         // form button
         submitButton.setBackgroundColor(color);
@@ -61,16 +67,15 @@ public class AddActivity extends AppCompatActivity {
 
     private void configureToolbar(){
         // back to home button in the navbar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.activity_add_toolbar);
-        toolbar.setBackgroundColor(color);
-        setSupportActionBar(toolbar);
+        this.toolbar.setBackgroundColor(color);
+        setSupportActionBar(this.toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
         ab.setDisplayShowHomeEnabled(true);
         Drawable drawable = getResources().getDrawable(R.drawable.baseline_arrow_back_20);
         drawable.setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_ATOP);
         ab.setHomeAsUpIndicator(drawable);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        this.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AddActivity.this, MainActivity.class);

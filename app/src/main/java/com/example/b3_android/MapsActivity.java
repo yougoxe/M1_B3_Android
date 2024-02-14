@@ -1,25 +1,25 @@
 package com.example.b3_android;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.widget.SearchView;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.location.Address;
-import android.location.Geocoder;
+import android.content.res.ColorStateList;
 import android.location.Location;
 import android.os.Bundle;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
+import com.example.b3_android.service.ColorService;
 import com.example.b3_android.service.LocalisationParameterService;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -30,19 +30,20 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
-    Button showMain;
+    FloatingActionButton showMain;
     FrameLayout map;
     GoogleMap gMap;
     Location currentLocation;
     Marker marker;
     FusedLocationProviderClient fusedClient;
     private static final int REQUEST_CODE = 101;
-    SearchView searchView;
+    private int color;
+    private String colorString;
 
+    private ColorService colorService = new ColorService();
     LocalisationParameterService locationParameterService = new LocalisationParameterService();
 
     @Override
@@ -63,7 +64,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         getLocation();
 
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        this.color = this.colorService.getColors(sharedPreferences);
+        this.colorString = this.colorService.getColorString(sharedPreferences);
+
+        Window window = getWindow();
+        this.colorService.setNotificationBarColor(this.color,window);
+
         showMain = findViewById(R.id.showMain);
+        showMain.setBackgroundTintList(ColorStateList.valueOf(color));
         showMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,13 +109,30 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         this.gMap = googleMap;
 
-        // désactiver les comportements par défaut
+        // disable default comportement
         this.gMap.getUiSettings().setRotateGesturesEnabled(false);
         this.gMap.getUiSettings().setZoomGesturesEnabled(false);
         this.gMap.getUiSettings().setScrollGesturesEnabled(false);
 
+        float colorBitmap = BitmapDescriptorFactory.HUE_BLUE;
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("My Current Location");
+        switch (this.colorString) {
+            case "#000000":
+                colorBitmap = BitmapDescriptorFactory.HUE_RED;
+                break;
+            case "#FF0000":
+                colorBitmap = BitmapDescriptorFactory.HUE_RED;
+                break;
+            case "#00FF00":
+                colorBitmap = BitmapDescriptorFactory.HUE_GREEN;
+                break;
+            case "#0000FF":
+                colorBitmap = BitmapDescriptorFactory.HUE_BLUE;
+                break;
+            default:
+                System.out.println("Couleur non reconnue");
+        }
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("My Current Location").icon(BitmapDescriptorFactory.defaultMarker(colorBitmap));;
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5));
         googleMap.addMarker(markerOptions);
