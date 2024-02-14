@@ -15,4 +15,15 @@
         <item>🌩️  thunder</item>
     </string-array>
     <string name="submit_activity_add">SUBMIT</string>
+
+    <string name="title_activity_setting">Parameter</string>
+    <string name="label_link_activity_setting">Server address :</string>
+    <string name="label_spinner_activity_setting">Main application color :</string>
+    <string-array name="color_spinner_activity_setting">
+        <item>Select</item>
+        <item>Black</item>
+        <item>Red</item>
+        <item>Green</item>
+        <item>Blue</item>
+    </string-array>
 </resources>

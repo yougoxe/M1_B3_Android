@@ -15,4 +15,15 @@
         <item>🌩️  Tonnerre</item>
     </string-array>
     <string name="submit_activity_add">SOUMETTRE</string>
+
+    <string name="title_activity_setting">Paramètre</string>
+    <string name="label_link_activity_setting">Adresse du serveur :</string>
+    <string name="label_spinner_activity_setting">Couleur principale de l\'application :</string>
+    <string-array name="color_spinner_activity_setting">
+        <item>Selectionner</item>
+        <item>Noir</item>
+        <item>Rouge</item>
+        <item>Vert</item>
+        <item>Bleu</item>
+    </string-array>
 </resources>

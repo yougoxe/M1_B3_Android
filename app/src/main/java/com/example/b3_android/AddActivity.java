@@ -1,16 +1,16 @@
 package com.example.b3_android;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
+import com.example.b3_android.service.ColorService;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,18 +19,14 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.b3_android.databinding.ActivityAddBinding;
 
 public class AddActivity extends AppCompatActivity {
 
     private EditText temperatureEditText;
     private Spinner unitSpinner;
     private Button submitButton;
+    int color;
+    private ColorService colorService = new ColorService();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +38,10 @@ public class AddActivity extends AppCompatActivity {
         unitSpinner = findViewById(R.id.unitSpinner);
         submitButton = findViewById(R.id.submitButton);
 
+        // get principal color
+        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        this.color = this.colorService.getColors(sharedPreferences);
+
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
                 R.array.weather_array, android.R.layout.simple_spinner_item);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -50,6 +50,7 @@ public class AddActivity extends AppCompatActivity {
         this.configureToolbar();
 
         // form button
+        submitButton.setBackgroundColor(color);
         submitButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -61,6 +62,7 @@ public class AddActivity extends AppCompatActivity {
     private void configureToolbar(){
         // back to home button in the navbar
         Toolbar toolbar = (Toolbar) findViewById(R.id.activity_add_toolbar);
+        toolbar.setBackgroundColor(color);
         setSupportActionBar(toolbar);
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
