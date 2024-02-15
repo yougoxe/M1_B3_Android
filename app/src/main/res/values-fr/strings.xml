@@ -15,6 +15,9 @@
         <item>🌩️  Tonnerre</item>
     </string-array>
     <string name="submit_activity_add">SOUMETTRE</string>
+    <string name="enter_temperature_activity_add">Veuillez saisir une température.</string>
+    <string name="enter_success_activity_add">Signalement envoyé avec succès</string>
+    <string name="enter_echec_activity_add">Erreur de connexion avec le serveur</string>
 
     <string name="title_activity_setting">Paramètre</string>
     <string name="label_link_activity_setting">Adresse du serveur :</string>

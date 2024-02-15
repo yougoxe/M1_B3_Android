@@ -15,6 +15,9 @@
         <item>🌩️  thunder</item>
     </string-array>
     <string name="submit_activity_add">SUBMIT</string>
+    <string name="enter_temperature_activity_add">Please enter a temperature.</string>
+    <string name="enter_success_activity_add">Report sent successfully</string>
+    <string name="enter_echec_activity_add">Server connection error</string>
 
     <string name="title_activity_setting">Parameter</string>
     <string name="label_link_activity_setting">Server address :</string>
