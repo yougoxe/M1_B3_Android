@@ -25,6 +25,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -108,6 +109,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onMapReady(GoogleMap googleMap) {
 
         this.gMap = googleMap;
+        this.gMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         // disable default comportement
         this.gMap.getUiSettings().setRotateGesturesEnabled(false);
@@ -133,9 +135,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 System.out.println("Couleur non reconnue");
         }
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("My Current Location").icon(BitmapDescriptorFactory.defaultMarker(colorBitmap));;
-        googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-        googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 5));
-        googleMap.addMarker(markerOptions);
+
+        // radius calcul
+        SharedPreferences sharedPreferences= getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        int radius = sharedPreferences.getInt("radius", 100);
+        double zoomLevel = 15 - Math.log(radius * 1000 / 500) / Math.log(2);
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(latLng)
+                .zoom((float) zoomLevel)
+                .build();
+        googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+        this.gMap.addMarker(markerOptions);
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {

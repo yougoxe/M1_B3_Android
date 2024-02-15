@@ -1,29 +1,26 @@
 package com.example.b3_android;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
-import android.Manifest;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.SeekBar;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+
 
 import com.example.b3_android.service.ColorService;
 import com.example.b3_android.service.LocalisationParameterService;
@@ -41,6 +38,8 @@ public class MainActivity extends AppCompatActivity {
     LocalisationParameterService locationParameterService = new LocalisationParameterService();
     ColorService colorService = new ColorService();
 
+    private SharedPreferences sharedPreferences;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         // get principal color
-        SharedPreferences sharedPreferences = getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        SharedPreferences sharedPreferences= getSharedPreferences("AppPreferences", MODE_PRIVATE);
         this.color = this.colorService.getColors(sharedPreferences);
 
         //configure the toolbar
@@ -98,8 +97,10 @@ public class MainActivity extends AppCompatActivity {
         });
 
         this.seekBar = findViewById(R.id.slider);
-        seekBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
-        seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        this.seekBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        this.seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
+        int radius = sharedPreferences.getInt("radius",20);
+        this.seekBar.setProgress(radius);
         this.seekBar.setDrawingCacheBackgroundColor(color);
         this.seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -114,7 +115,8 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                // Not Used
+                SharedPreferences sharedPreferences= getSharedPreferences("AppPreferences", MODE_PRIVATE);
+                sharedPreferences.edit().putInt("radius", seekBar.getProgress()).apply();
             }
         });
     }
@@ -135,17 +137,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
-        }
-    }
-
-    private void configureToolbar(){
-        toolbar = (Toolbar) findViewById(R.id.activity_main_toolbar);
-        toolbar.setBackgroundColor(color);
-        setSupportActionBar(toolbar);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            Window window = getWindow();
-            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(color);
         }
     }
 }
