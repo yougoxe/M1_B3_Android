@@ -4,18 +4,30 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.FragmentActivity;
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
+import android.util.TypedValue;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.b3_android.DTO.WeatherData;
 import com.example.b3_android.service.ColorService;
 import com.example.b3_android.service.LocalisationParameterService;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -32,6 +44,15 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.gson.Gson;
+
+import java.io.IOException;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback{
     FloatingActionButton showMain;
@@ -43,10 +64,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final int REQUEST_CODE = 101;
     private int color;
     private String colorString;
+    final OkHttpClient client = new OkHttpClient();
 
     private ColorService colorService = new ColorService();
     LocalisationParameterService locationParameterService = new LocalisationParameterService();
 
+    private static String responder;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,10 +79,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         locationParameterService.setCurrentActivity(this);
         if (!locationParameterService.isLocationPermissionGranted()) {
-            // Demander la permission de localisation
+            // Check if location permission is enabled
             locationParameterService.requestLocationPermission();
         } else {
-            // Vérifier si la localisation est activée
+            // Check if location is enabled and prompt to enable it
             locationParameterService.checkLocationSettings();
         }
 
@@ -97,7 +120,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             public void onSuccess(Location location) {
                 if (location != null) {
                     currentLocation = location;
-                    //Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
                     SupportMapFragment supportMapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
                     assert supportMapFragment != null;
                     supportMapFragment.getMapAsync(MapsActivity.this);
@@ -116,6 +138,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         this.gMap.getUiSettings().setZoomGesturesEnabled(false);
         this.gMap.getUiSettings().setScrollGesturesEnabled(false);
 
+        this.gMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                // Prevent the map from centering on the marker.
+                showDialogWithMarkerInfo(marker.getTitle(), marker.getSnippet());
+                return true;
+            }
+        });
+
         float colorBitmap = BitmapDescriptorFactory.HUE_BLUE;
         LatLng latLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
         switch (this.colorString) {
@@ -132,7 +163,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 colorBitmap = BitmapDescriptorFactory.HUE_BLUE;
                 break;
             default:
-                System.out.println("Couleur non reconnue");
+                break;
         }
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("My Current Location").icon(BitmapDescriptorFactory.defaultMarker(colorBitmap));;
 
@@ -146,6 +177,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 .build();
         googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
         this.gMap.addMarker(markerOptions);
+
+        callApi();
+    }
+
+
+    private void showDialogWithMarkerInfo(String title, String description) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(title)
+                .setMessage(description)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        // Nothing to do
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -155,5 +202,102 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 getLocation();
             }
         }
+    }
+
+    public void addMarkers(MarkerOptions markerOptions, int id){
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.layout.activity_maps,id)));
+        this.gMap.addMarker(markerOptions);
+    }
+
+    private Bitmap getMarkerBitmapFromView(int resId, int id) {
+        View customMarkerView = ((LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE)).inflate(resId, null);
+        TextView markerText = new TextView(getApplicationContext());
+        switch (id) {
+            case 1:
+                markerText.setText("☀️ ️");
+                break;
+            case 2:
+                markerText.setText("☁️ ️");
+                break;
+            case 3:
+                markerText.setText("🌧️");
+                break;
+            case 4:
+                markerText.setText("🌫️");
+                break;
+            case 5:
+                markerText.setText("⛅  ");
+                break;
+            case 6:
+                markerText.setText("🌦️  ");
+                break;
+            case 7:
+                markerText.setText("❄️ ");
+                break;
+            case 8:
+                markerText.setText("🌩️");
+                break;
+        }
+        markerText.setTextColor(Color.WHITE);
+        markerText.setTextSize(TypedValue.COMPLEX_UNIT_SP, 48);
+        markerText.measure(View.MeasureSpec.UNSPECIFIED, View.MeasureSpec.UNSPECIFIED);
+        markerText.layout(0, 0, markerText.getMeasuredWidth(), markerText.getMeasuredHeight());
+        markerText.setDrawingCacheEnabled(true);
+        markerText.buildDrawingCache();
+        Bitmap returnedBitmap = Bitmap.createBitmap(markerText.getMeasuredWidth(), markerText.getMeasuredHeight(),
+                Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(returnedBitmap);
+        markerText.draw(canvas);
+        return returnedBitmap;
+    }
+
+    public void callApi()
+    {
+        SharedPreferences sharedPreferences= getSharedPreferences("AppPreferences", MODE_PRIVATE);
+        String apilink = sharedPreferences.getString("apiLink", "");
+        int radius = sharedPreferences.getInt("radius",20);
+        String url = apilink+"/api/reports/closests?"+"longitude=" + currentLocation.getLongitude() + "&latitude=" + currentLocation.getLatitude() + "&kmRadius=" + radius;;
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+        client.newCall(request).enqueue(new Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+                e.getMessage();
+            }
+
+            @Override
+            public void onResponse(Call call, Response response) throws IOException {
+                if (response.isSuccessful()) {
+                    responder = response.body().string();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Gson gson = new Gson();
+                            WeatherData[] weatherDataArray = gson.fromJson(MapsActivity.responder, WeatherData[].class);
+
+                            for (WeatherData weatherData : weatherDataArray) {
+                                LatLng markerPosition = new LatLng(weatherData.getLatitude(), weatherData.getLongitude());
+                                MarkerOptions markerOptions = new MarkerOptions();
+                                markerOptions.position(markerPosition);
+                                markerOptions.title(weatherData.getLocationName());
+                                markerOptions.snippet(weatherData.getWeatherType().getType() + " " + weatherData.getTemperature() + "°");
+                                addMarkers(markerOptions, weatherData.getWeatherType().getId());
+                            }
+                        }
+                    });
+                } else {
+                    Log.e("POST_ERROR", "Code d'erreur : " + response.code() +" "+ response.message());
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            String message = getResources().getString(R.string.enter_echec_activity_add);
+                            Toast.makeText(MapsActivity.this, message, Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                }
+            }
+        });
     }
 }
