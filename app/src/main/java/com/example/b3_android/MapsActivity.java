@@ -47,6 +47,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -165,7 +167,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             default:
                 break;
         }
-        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("My Current Location").icon(BitmapDescriptorFactory.defaultMarker(colorBitmap));;
+        String title = getResources().getString(R.string.current_location_activity_map);
+        MarkerOptions markerOptions = new MarkerOptions().position(latLng).title(title).icon(BitmapDescriptorFactory.defaultMarker(colorBitmap));;
 
         // radius calcul
         SharedPreferences sharedPreferences= getSharedPreferences("AppPreferences", MODE_PRIVATE);
@@ -204,8 +207,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    public void addMarkers(MarkerOptions markerOptions, int id){
-        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.layout.activity_maps,id)));
+    public void addMarkers(WeatherData weatherData){
+        LatLng markerPosition = new LatLng(weatherData.getLatitude(), weatherData.getLongitude());
+        MarkerOptions markerOptions = new MarkerOptions();
+        markerOptions.position(markerPosition);
+        markerOptions.title(weatherData.getLocationName());
+
+        // format Date
+        SimpleDateFormat outputDateFormat = new SimpleDateFormat("dd/MM/yyyy", getResources().getConfiguration().locale);
+        String formattedDate = outputDateFormat.format(weatherData.getDate());
+
+        String weatherName = "";
+        switch (weatherData.getWeatherType().getId()) {
+            case 1:
+                weatherName = getResources().getString(R.string.sunny_activity_map);
+                break;
+            case 2:
+                weatherName = getResources().getString(R.string.cloudy_activity_map);
+                break;
+            case 3:
+                weatherName = getResources().getString(R.string.rain_activity_map);
+                break;
+            case 4:
+                weatherName = getResources().getString(R.string.fog_activity_map);
+                break;
+            case 5:
+                weatherName = getResources().getString(R.string.partly_cloud_activity_map);
+                break;
+            case 6:
+                weatherName = getResources().getString(R.string.showers_activity_map);
+                break;
+            case 7:
+                weatherName = getResources().getString(R.string.snow_activity_map);
+                break;
+            case 8:
+                weatherName = getResources().getString(R.string.thunder_activity_map);
+                break;
+        }
+
+
+        markerOptions.snippet(weatherName+ " " + weatherData.getTemperature() + "° \n" + formattedDate);
+        markerOptions.icon(BitmapDescriptorFactory.fromBitmap(getMarkerBitmapFromView(R.layout.activity_maps,weatherData.getWeatherType().getId())));
         this.gMap.addMarker(markerOptions);
     }
 
@@ -278,12 +320,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             WeatherData[] weatherDataArray = gson.fromJson(MapsActivity.responder, WeatherData[].class);
 
                             for (WeatherData weatherData : weatherDataArray) {
-                                LatLng markerPosition = new LatLng(weatherData.getLatitude(), weatherData.getLongitude());
-                                MarkerOptions markerOptions = new MarkerOptions();
-                                markerOptions.position(markerPosition);
-                                markerOptions.title(weatherData.getLocationName());
-                                markerOptions.snippet(weatherData.getWeatherType().getType() + " " + weatherData.getTemperature() + "°");
-                                addMarkers(markerOptions, weatherData.getWeatherType().getId());
+
+                                addMarkers(weatherData);
                             }
                         }
                     });

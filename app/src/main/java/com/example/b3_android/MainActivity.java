@@ -165,11 +165,6 @@ public class MainActivity extends AppCompatActivity {
         labelNom.setText(message);
         row.addView(labelNom);
 
-        TableRow.LayoutParams paramButton = new TableRow.LayoutParams(
-                TableRow.LayoutParams.MATCH_PARENT,
-                TableRow.LayoutParams.WRAP_CONTENT,
-                1f
-        );
         tableList.addView(row);
 
     }
@@ -249,11 +244,11 @@ public class MainActivity extends AppCompatActivity {
                                             TableRow.LayoutParams.WRAP_CONTENT,
                                             4f
                                     );
+                                    param.setMargins(0, 20, 0, 20);
                                     TextView labelNom = new TextView(MainActivity.this);
-                                    labelNom.setLayoutParams(param);
                                     String text = weatherData.getLocationName() + " " + weatherData.getTemperature() + "°";
                                     labelNom.setText(text);
-                                    row.addView(labelNom);
+                                    row.addView(labelNom,param);
 
                                     TableRow.LayoutParams paramButton = new TableRow.LayoutParams(
                                             TableRow.LayoutParams.MATCH_PARENT,

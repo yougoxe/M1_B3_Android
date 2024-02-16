@@ -31,4 +31,16 @@
         <item>Green</item>
         <item>Blue</item>
     </string-array>
+
+
+    <string name="sunny_activity_map">sunny</string>
+    <string name="cloudy_activity_map">cloudy</string>
+    <string name="rain_activity_map">rain</string>
+    <string name="fog_activity_map">fog</string>
+    <string name="partly_cloud_activity_map">partly cloudy</string>
+    <string name="showers_activity_map">showers</string>
+    <string name="snow_activity_map">snow</string>
+    <string name="thunder_activity_map">thunder</string>
+
+    <string name="current_location_activity_map">Ma position</string>
 </resources>

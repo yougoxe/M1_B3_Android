@@ -31,4 +31,16 @@
         <item>Vert</item>
         <item>Bleu</item>
     </string-array>
+
+
+    <string name="sunny_activity_map">️Ensoleillé</string>
+    <string name="cloudy_activity_map">Nuageux</string>
+    <string name="rain_activity_map">Pluie</string>
+    <string name="fog_activity_map">Brouillard</string>
+    <string name="partly_cloud_activity_map">Partiellement nuageux</string>
+    <string name="showers_activity_map">Averses</string>
+    <string name="snow_activity_map">Neige</string>
+    <string name="thunder_activity_map">Tonnerre</string>
+
+    <string name="current_location_activity_map">Ma position</string>
 </resources>
