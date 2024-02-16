@@ -2,6 +2,8 @@
     <string name="app_name">B3_android</string>
     <string name="title_activity_maps">MapsActivity</string>
 
+    <string name="no_data_activity_main">No data found</string>
+
     <string name="title_activity_add">Report weather</string>
     <string name="edit_text_activity_add">Enter the temperature</string>
     <string-array name="weather_array">
