@@ -48,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
     int color;
     Toolbar toolbar;
+    FloatingActionButton swap;
     FloatingActionButton showMap;
     FloatingActionButton add;
     private SeekBar seekBar;
@@ -85,6 +86,20 @@ public class MainActivity extends AppCompatActivity {
         Window window = getWindow();
         this.colorService.setToolbarColor(toolbar, color, window);
         setSupportActionBar(toolbar);
+
+        swap = findViewById(R.id.swap);
+        swap.setBackgroundTintList(ColorStateList.valueOf(color));
+        swap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int count = tableList.getChildCount();
+                for (int i = count - 1; i >= 0; i--) {
+                    View child = tableList.getChildAt(i);
+                    tableList.removeViewAt(i);
+                    tableList.addView(child);
+                }
+            }
+        });
 
         showMap = findViewById(R.id.showMap);
         showMap.setBackgroundTintList(ColorStateList.valueOf(color));

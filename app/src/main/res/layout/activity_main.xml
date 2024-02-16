@@ -15,6 +15,20 @@
         app:title="@string/app_name"
         app:titleTextColor="#f6f6f6f6" />
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/swap"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/swap_vert_24px"
+        android:text="showMap"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.10" />
+
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/showMap"
