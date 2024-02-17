@@ -19,6 +19,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.example.b3_android.service.ColorService;
 
@@ -82,25 +83,34 @@ public class SettingActivity extends AppCompatActivity {
         mainColorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                boolean needReload = false;
                 switch (parent.getSelectedItemPosition()) {
                     case 0:
                         break;
                     case 1:
                         colorCode = "#000000";
+                        needReload = true;
                         break;
                     case 2:
                         colorCode = "#FF0000";
+                        needReload = true;
                         break;
                     case 3:
                         colorCode = "#00FF00";
+                        needReload = true;
                         break;
                     case 4:
                         colorCode = "#0000FF";
+                        needReload = true;
                         break;
                 }
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString("mainColor", colorCode);
                 editor.apply();
+                if(needReload){
+                    recreate();
+                    mainColorSpinner.setSelection(0);
+                }
             }
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
