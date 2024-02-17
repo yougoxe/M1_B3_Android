@@ -109,7 +109,6 @@ public class MainActivity extends AppCompatActivity {
                 if(locationParameterService.IsLocationActivated()){
                     Intent intent = new Intent(MainActivity.this, MapsActivity.class);
                     startActivity(intent);
-                    finish();
                 }else {
                     locationParameterService.checkLocationSettings();
                 }
@@ -126,7 +125,6 @@ public class MainActivity extends AppCompatActivity {
                 if(locationParameterService.IsLocationActivated()){
                     Intent intent = new Intent(MainActivity.this, AddActivity.class);
                     startActivity(intent);
-                    finish();
                 }else {
                     locationParameterService.checkLocationSettings();
                 }
@@ -196,7 +194,6 @@ public class MainActivity extends AppCompatActivity {
             case R.id.menu_activity_main_params:
                 Intent intent = new Intent(MainActivity.this, SettingActivity.class);
                 startActivity(intent);
-                finish();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

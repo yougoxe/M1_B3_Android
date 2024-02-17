@@ -103,8 +103,6 @@ public class AddActivity extends AppCompatActivity {
         this.toolbar.setNavigationOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AddActivity.this, MainActivity.class);
-                startActivity(intent);
                 finish();
             }
         });
