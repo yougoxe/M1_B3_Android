@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, String.valueOf(seekBar.getProgress()), Toast.LENGTH_SHORT).show();
                 SharedPreferences sharedPreferences= getSharedPreferences("AppPreferences", MODE_PRIVATE);
                 sharedPreferences.edit().putInt("radius", seekBar.getProgress()).apply();
-                callApi();
+                getLocation();
             }
         });
 
