@@ -108,6 +108,7 @@ public class SettingActivity extends AppCompatActivity {
                 editor.putString("mainColor", colorCode);
                 editor.apply();
                 if(needReload){
+                    requestReloadMainActivity();
                     recreate();
                     mainColorSpinner.setSelection(0);
                 }
@@ -116,6 +117,11 @@ public class SettingActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {
             }
         });
+    }
+
+    private void requestReloadMainActivity() {
+        Intent intent = new Intent("com.example.app.RELOAD_MAIN_ACTIVITY");
+        sendBroadcast(intent);
     }
 
     private void configureToolbar(){

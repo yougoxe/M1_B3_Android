@@ -1,7 +1,10 @@
 package com.example.b3_android;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
@@ -62,6 +65,14 @@ public class MainActivity extends AppCompatActivity {
 
     private static String responder;
 
+    private BroadcastReceiver reloadReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if ("com.example.app.RELOAD_MAIN_ACTIVITY".equals(intent.getAction())) {
+                recreate();
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +191,8 @@ public class MainActivity extends AppCompatActivity {
 
         tableList.addView(row);
 
+        IntentFilter filter = new IntentFilter("com.example.app.RELOAD_MAIN_ACTIVITY");
+        registerReceiver(reloadReceiver, filter);
     }
 
     @Override
